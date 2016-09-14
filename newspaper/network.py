@@ -18,7 +18,7 @@ from .settings import cj
 log = logging.getLogger(__name__)
 
 
-def get_request_kwargs(timeout, useragent):
+def get_request_kwargs(timeout, useragent, proxy=None):
     """This Wrapper method exists b/c some values in req_kwargs dict
     are methods which need to be called every time we make a request
     """
@@ -26,7 +26,8 @@ def get_request_kwargs(timeout, useragent):
         'headers': {'User-Agent': useragent},
         'cookies': cj(),
         'timeout': timeout,
-        'allow_redirects': True
+        'allow_redirects': True,
+        'proxies': proxy
     }
 
 
@@ -42,6 +43,7 @@ def get_html(url, config=None, response=None):
     config = config or Configuration()
     useragent = config.browser_user_agent
     timeout = config.request_timeout
+    proxy = config.proxy
 
     if response is not None:
         if response.encoding != FAIL_ENCODING:
@@ -52,7 +54,7 @@ def get_html(url, config=None, response=None):
         html = None
         response = requests.get(url=url,
                                 verify=False,
-                                **get_request_kwargs(timeout, useragent))
+                                **get_request_kwargs(timeout, useragent, proxy))
         if response.encoding != FAIL_ENCODING:
             html = response.text
         else:
@@ -78,13 +80,14 @@ class MRequest(object):
         self.useragent = config.browser_user_agent
         self.timeout = config.request_timeout
         self.resp = None
+        self.proxy = config.proxy
 
     def send(self):
         try:
             self.resp = requests.get(self.url,
                                      verify=False,
                                      **get_request_kwargs(
-                                     self.timeout, self.useragent))
+                                     self.timeout, self.useragent, self.proxy))
         except Exception, e:
             pass
             log.critical('[REQUEST FAILED] ' + str(e))

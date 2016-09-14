@@ -63,6 +63,8 @@ class Configuration(object):
 
         self.verbose = False  # for debugging
 
+        self.proxy = None
+
         # Set this to False if you want to recompute the categories
         # *every* time you build a `Source` object
         # TODO: Actually make this work
