@@ -20,7 +20,7 @@ with open(settings.NLP_STOPWORDS_EN, 'r') as f:
 ideal = 20.0
 
 
-def summarize(url='', title='', text=''):
+def summarize(url='', title='', text='', maintain_order=True, summary_lines=5):
     if (text == '' or title == ''):
         return []
 
@@ -29,10 +29,16 @@ def summarize(url='', title='', text=''):
     keys = keywords(text)
     titleWords = split_words(title)
 
-    # Score setences, and use the top 5 sentences
-    ranks = score(sentences, titleWords, keys).most_common(5)
+    # Score sentences, and use the top 5 sentences
+    # ES-1131: allow for more than 5 summary lines (or less..). Default is kept at 5.
+    ranks = score(sentences, titleWords, keys).most_common(summary_lines)
     for rank in ranks:
         summaries.append(rank[0])
+
+    # ES-1131: maintain the in-article order of the N most relevant summary lines, regardless of their relevancy score.
+    if maintain_order:
+        summaries.sort(key=lambda sentence_tuple: sentence_tuple[1])
+
     return summaries
 
 
