@@ -322,7 +322,9 @@ class Article(object):
         keyws = list(set(title_keyws + text_keyws))
         self.set_keywords(keyws)
 
-        summary_sents = nlp.summarize(title=self.title, text=self.text)
+        # ES-1131: strip the line number associated with every summation sentence.
+        # The line number is not removed internally by the summarize method in order to maintain backward compatibility.
+        summary_sents = [sentence_tuple[0] for sentence_tuple in nlp.summarize(title=self.title, text=self.text)]
         summary = '\n'.join(summary_sents)
         self.set_summary(summary)
 
