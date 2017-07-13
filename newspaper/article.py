@@ -322,11 +322,17 @@ class Article(object):
         keyws = list(set(title_keyws + text_keyws))
         self.set_keywords(keyws)
 
+        summary = self.get_summary(self.title, self.text)
+        self.set_summary(summary)
+
+    @staticmethod
+    def get_summary(title, text):
+        """Returns summary for provided title and text
+        """
         # ES-1131: strip the line number associated with every summation sentence.
         # The line number is not removed internally by the summarize method in order to maintain backward compatibility.
-        summary_sents = [sentence_tuple[0] for sentence_tuple in nlp.summarize(title=self.title, text=self.text)]
-        summary = '\n'.join(summary_sents)
-        self.set_summary(summary)
+        summary_sents = [sentence_tuple[0] for sentence_tuple in nlp.summarize(title=title, text=text)]
+        return '\n'.join(summary_sents)
 
     def get_parse_candidate(self):
         """A parse candidate is a wrapper object holding a link hash of this
