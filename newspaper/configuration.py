@@ -104,8 +104,11 @@ class Configuration(object):
 
     @staticmethod
     def get_stopwords_class(language):
+
         if language == 'ko':
             return StopWordsKorean
+        elif language == 'ja':
+            return StopWordsJapanese
         elif language == 'hi':
             return StopWordsHindi
         elif language == 'zh':
