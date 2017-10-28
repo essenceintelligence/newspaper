@@ -406,8 +406,9 @@ class ContentExtractor(object):
         """Extract content language from meta
         """
         # use langid to classify language
-        import langid
-        id = langid.classify(doc.text_content())
+        from langid.langid import LanguageIdentifier, model
+        identifier = LanguageIdentifier.from_modelstring(model, norm_probs=True)
+        id = identifier.classify(doc.text_content())
         if id and len(id[0]) == 2 and id[1] > 0.7:
             log.info('Detected language %s with probability %s' % (id[0], id[1]))
             return id[0]
